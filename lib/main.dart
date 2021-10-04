@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:expenses/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/chart.dart';
@@ -119,15 +123,32 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
 
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final appBar = AppBar(
-      title: Text('Expenses App'),
-      actions: [
-        IconButton(
-          onPressed: () => _startAddNewTransaction(context),
-          icon: Icon(Icons.add_box_outlined),
-        ),
-      ],
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text(
+              'Personal Expenses',
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text(
+              'Personal Expenses',
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.add_box_outlined),
+                onPressed: () => _startAddNewTransaction(context),
+              ),
+            ],
+          ) as PreferredSizeWidget;
 
     var transactionList = Container(
       height: (mediaQuery.size.height -
